@@ -190,7 +190,7 @@ Future<void> save() async {
 }
 
 String getCircledAccent(int accent) {
-  const circleMap = '⓪①②③⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟';
+  const circleMap = '⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟';
 
   if (accent < 0) return '';
 
