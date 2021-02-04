@@ -39,8 +39,9 @@ A Japanese font (Noto Serif JP) is specified in `pubspec.yaml`, but not included
 
 ## Screenshots
 
-![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.49.05](./README.assets/Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.49.05.png)
+![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.49.05](./README.assets/1.png)
 
-![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.51.07](./README.assets/Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.51.07.png)
+![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.51.07](./README.assets/2.png)
 
-![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.50.44](./README.assets/Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.50.44.png)
+![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.50.44](./README.assets/3.png)
+
