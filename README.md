@@ -36,3 +36,11 @@ The unchecked items have not been implemented yet.
 This app is still in the alpha stage, and we do not provide pre-compiled binaries. You can visit the [Flutter website](https://flutter.dev) and read the instructions on how to build the app.
 
 A Japanese font (Noto Serif JP) is specified in `pubspec.yaml`, but not included in this repository, as the font files can make the repo too large. You can download the files on [Google Fonts](https://fonts.google.com) and copy them into `fonts/` directory if you would like to used the font. Otherwise, you could modify `pubspec.yaml` or other source files to use other fonts.
+
+## Screenshots
+
+![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.49.05](./README.assets/Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.49.05.png)
+
+![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.51.07](./README.assets/Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.51.07.png)
+
+![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.50.44](./README.assets/Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.50.44.png)
