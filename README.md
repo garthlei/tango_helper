@@ -11,8 +11,8 @@ The unchecked items have not been implemented yet.
   - [ ] Alternative written forms
   - [x] Hiragana
   - [x] Accent
-  - [ ] Part of speech
-  - [ ] Meaning
+  - [x] Part of speech
+  - [x] Meaning
   - [ ] Example sentences
   - [x] Brief memorization history
   - [ ] Detailed memorization history
@@ -20,10 +20,10 @@ The unchecked items have not been implemented yet.
   - [x] "Remember"/"Don't remember" options
   - [ ] Multiple choice questions
   - [x] Read test (written form to hiragana)
-  - [ ] Meaning test (written form/hiragana to meaning)
+  - [x] Meaning test (written form/hiragana to meaning)
   - [ ] Output test (meaning to written form/hiragana)
   - [x] Write test (hiragana to written form)
-  - [ ] Accent support
+  - [x] Accent support
   - [ ] Hints
   - [x] Test mode selection
 - [ ] Platform collaboration
@@ -35,7 +35,7 @@ The unchecked items have not been implemented yet.
 
 This app is still in the alpha stage, and we do not provide pre-compiled binaries. You can visit the [Flutter website](https://flutter.dev) and read the instructions on how to build the app.
 
-A Japanese font (Noto Serif JP) is specified in `pubspec.yaml`, but not included in this repository, as the font files can make the repo too large. You can download the files on [Google Fonts](https://fonts.google.com) and copy them into `fonts/` directory if you would like to used the font. Otherwise, you could modify `pubspec.yaml` or other source files to use other fonts.
+Considering the repo size and potential copyright issues, we do not provide font files in the repository. A Japanese font (Noto Serif JP) is specified in `pubspec.yaml`. You can download the files on [Google Fonts](https://fonts.google.com) and copy them into `fonts/` directory if you would like to used the font. Otherwise, you could modify `pubspec.yaml` or other source files to use other fonts. A Chinese font should also be specified in `pubspec.yaml`, with the name *ChineseFont*. You can copy your favorite Chinese font into `fonts/`, and specify it as *ChineseFont* in `pubspec.yaml`. This font is used in word explanations.
 
 ## Screenshots
 
@@ -45,3 +45,8 @@ A Japanese font (Noto Serif JP) is specified in `pubspec.yaml`, but not included
 
 ![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.50.44](./README.assets/3.png)
 
+![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.50.44](./README.assets/4.png)
+
+# Acknowledgments
+
+The major functionalities of this app are inspired by other word-memorizing apps, such as MOJi辞書, 沪江开心词场, 拓词 (for English), and 扇贝单词 (for English). Parts of speeches are based on the grammar system of the Japanese textbook *综合日语*.

@@ -86,18 +86,20 @@ class PosAdapter extends TypeAdapter<Pos> {
       case 13:
         return Pos.conj;
       case 14:
-        return Pos.cp;
+        return Pos.jud;
       case 15:
-        return Pos.promp;
+        return Pos.cp;
       case 16:
-        return Pos.endp;
+        return Pos.promp;
       case 17:
-        return Pos.contp;
+        return Pos.endp;
       case 18:
-        return Pos.parp;
+        return Pos.contp;
       case 19:
-        return Pos.quotp;
+        return Pos.parp;
       case 20:
+        return Pos.quotp;
+      case 21:
         return Pos.np;
       default:
         return null;
@@ -149,26 +151,29 @@ class PosAdapter extends TypeAdapter<Pos> {
       case Pos.conj:
         writer.writeByte(13);
         break;
-      case Pos.cp:
+      case Pos.jud:
         writer.writeByte(14);
         break;
-      case Pos.promp:
+      case Pos.cp:
         writer.writeByte(15);
         break;
-      case Pos.endp:
+      case Pos.promp:
         writer.writeByte(16);
         break;
-      case Pos.contp:
+      case Pos.endp:
         writer.writeByte(17);
         break;
-      case Pos.parp:
+      case Pos.contp:
         writer.writeByte(18);
         break;
-      case Pos.quotp:
+      case Pos.parp:
         writer.writeByte(19);
         break;
-      case Pos.np:
+      case Pos.quotp:
         writer.writeByte(20);
+        break;
+      case Pos.np:
+        writer.writeByte(21);
         break;
     }
   }
@@ -180,6 +185,49 @@ class PosAdapter extends TypeAdapter<Pos> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is PosAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class AnswerRecordAdapter extends TypeAdapter<AnswerRecord> {
+  @override
+  final int typeId = 3;
+
+  @override
+  AnswerRecord read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return AnswerRecord(
+      answer: fields[0] as bool,
+      type: fields[1] as Mode,
+      time: fields[2] as DateTime,
+      duration: fields[3] as Duration,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, AnswerRecord obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.answer)
+      ..writeByte(1)
+      ..write(obj.type)
+      ..writeByte(2)
+      ..write(obj.time)
+      ..writeByte(3)
+      ..write(obj.duration);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AnswerRecordAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -197,23 +245,25 @@ class WordAdapter extends TypeAdapter<Word> {
     return Word()
       ..writtenForm = fields[0] as String
       ..hiragana = fields[1] as String
-      ..accent = fields[2] as int
+      ..accent = (fields[8] as List)?.cast<int>()
       ..meaning = fields[3] as String
       ..pos = (fields[4] as List)?.cast<bool>()
       .._totalAnswers = fields[5] as int
       .._correctAnswers = fields[6] as int
-      .._lastAnswer = fields[7] as bool;
+      ..answers = (fields[9] as List)?.cast<AnswerRecord>()
+      .._lastAnswer = fields[7] as bool
+      ..isDisabled = fields[10] as bool;
   }
 
   @override
   void write(BinaryWriter writer, Word obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.writtenForm)
       ..writeByte(1)
       ..write(obj.hiragana)
-      ..writeByte(2)
+      ..writeByte(8)
       ..write(obj.accent)
       ..writeByte(3)
       ..write(obj.meaning)
@@ -223,8 +273,12 @@ class WordAdapter extends TypeAdapter<Word> {
       ..write(obj._totalAnswers)
       ..writeByte(6)
       ..write(obj._correctAnswers)
+      ..writeByte(9)
+      ..write(obj.answers)
       ..writeByte(7)
-      ..write(obj._lastAnswer);
+      ..write(obj._lastAnswer)
+      ..writeByte(10)
+      ..write(obj.isDisabled);
   }
 
   @override

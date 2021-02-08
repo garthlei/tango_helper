@@ -2,10 +2,16 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:tango_helper/non_ui.dart';
+import 'package:tango_helper/theme.dart';
 
 /// Widgets related to memorization.
 
 class MemoPage extends StatefulWidget {
+  final VoidCallback callback;
+
+  @override
+  MemoPage({@required this.callback});
+
   @override
   _MemoPageState createState() => _MemoPageState();
 }
@@ -17,8 +23,15 @@ class _MemoPageState extends State<MemoPage> {
   bool isInTest = true;
 
   Mode _mode;
-  Word _currentWord = wordList[Random().nextInt(wordList.length)];
+  final _tempWordList = wordList.where((e) => !e.isDisabled).toList();
+  Word _currentWord;
   // TODO Check whether [wordList] is empty.
+
+  @override
+  void initState() {
+    super.initState();
+    _currentWord = _tempWordList[Random().nextInt(_tempWordList.length)];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +42,20 @@ class _MemoPageState extends State<MemoPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('单词 $_index')),
+      backgroundColor: lightColor,
+      appBar: AppBar(
+        backgroundColor: lightColor,
+        shadowColor: const Color(0),
+        leading: IconButton(
+          icon: BackButtonIcon(),
+          color: darkColor,
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          '单词 $_index',
+          style: TextStyle(color: darkColor),
+        ),
+      ),
       body: isInTest
           ? TestBody(
               word: _currentWord,
@@ -38,21 +64,22 @@ class _MemoPageState extends State<MemoPage> {
                 setState(() {
                   isInTest = false;
                 });
+                widget.callback();
               },
             )
           : ReviewBody(
               word: _currentWord,
-              callback: (isReversed) async {
-                if (isReversed == null)
-                  throw Exception(
-                      '[isReversed] is [null] in callback parameter');
-                if (isReversed == true) await _currentWord.reverse();
-                if (!isReversed) {
+              callback: (isBack) {
+                if (isBack == null)
+                  throw Exception('[isBack] is [null] in callback parameter');
+                if (!isBack) {
                   _index++;
-                  _currentWord = wordList[Random().nextInt(wordList.length)];
+                  _currentWord =
+                      _tempWordList[Random().nextInt(_tempWordList.length)];
                 }
                 isInTest = true;
                 setState(() {});
+                widget.callback();
               }),
     );
   }
@@ -63,6 +90,7 @@ class TestBody extends StatelessWidget {
   final Word word;
   final Mode mode;
   final VoidCallback callback;
+  final DateTime _startTime = DateTime.now();
 
   @override
   TestBody({@required this.word, @required this.mode, @required this.callback})
@@ -70,12 +98,12 @@ class TestBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Center(
+    return Column(
+      children: [
+        Center(
+          child: Container(
+            height: MediaQuery.of(context).size.height / 3,
+            alignment: AlignmentDirectional.center,
             child: mode == Mode.read
                 ? Text(
                     word.writtenForm,
@@ -92,36 +120,69 @@ class TestBody extends StatelessWidget {
                     ),
                   ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                child:
-                    Text('记得', style: TextStyle(fontWeight: FontWeight.bold)),
-                style: ElevatedButton.styleFrom(
-                    primary: Colors.green,
-                    minimumSize: Size(128.0, 64.0),
-                    textStyle: TextStyle(fontSize: 24.0)),
-                onPressed: () async {
-                  await word.answer(true);
-                  callback();
-                },
-              ),
-              ElevatedButton(
-                child: Text('不记得', style: TextStyle(fontWeight: FontWeight.bold)),
-                style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
-                    minimumSize: Size(128.0, 64.0),
-                    textStyle: TextStyle(fontSize: 24.0)),
-                onPressed: () async {
-                  await word.answer(false);
-                  callback();
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+        Expanded(
+          child: Container(
+              margin: EdgeInsets.only(top: 32.0),
+              child: Material(
+                  color: darkColor,
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.check_circle),
+                              iconSize: 112.0,
+                              color: lightColor,
+                              onPressed: () async {
+                                await word.answer(AnswerRecord(
+                                    answer: true,
+                                    type: mode,
+                                    time: _startTime,
+                                    duration:
+                                        DateTime.now().difference(_startTime)));
+                                callback();
+                              },
+                            ),
+                            Text('我记得',
+                                style: TextStyle(
+                                    color: lightColor,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.cancel),
+                              iconSize: 112.0,
+                              color: lightColor,
+                              onPressed: () async {
+                                await word.answer(AnswerRecord(
+                                    answer: false,
+                                    type: mode,
+                                    time: _startTime,
+                                    duration:
+                                        DateTime.now().difference(_startTime)));
+                                callback();
+                              },
+                            ),
+                            Text('我忘了',
+                                style: TextStyle(
+                                    color: lightColor,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ))),
+        )
+      ],
     );
   }
 }
@@ -137,37 +198,107 @@ class ReviewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Column(
-              children: [
-                Text(word.writtenForm,
-                    style: TextStyle(
-                      fontSize: word.writtenForm.length < 5 ? 72.0 : 64.0,
-                      fontFamily: 'JapaneseFont',
-                      // fontWeight: FontWeight.w700
-                    )),
-                SizedBox(height: 16.0),
-                Text(word.hiragana + getCircledAccent(word.accent),
-                    style:
-                        TextStyle(fontSize: 36.0, fontFamily: 'JapaneseFont')),
-              ],
-            ),
-            Column(
-              children: [
-                ElevatedButton(
-                    child: Text('下一个'), onPressed: () => callback(false)),
-                TextButton(
-                    child: Text('撤回选择'), onPressed: () => callback(true)),
-              ],
-            )
-          ],
+    return Column(
+      children: [
+        Center(
+          child: Column(
+            children: [
+              SizedBox(height: 64.0),
+              Text(word.writtenForm,
+                  style: TextStyle(
+                    fontSize: word.writtenForm.length < 5 ? 72.0 : 64.0,
+                    fontFamily: 'JapaneseFont',
+                  )),
+              SizedBox(height: 16.0),
+              Text(
+                  word.hiragana +
+                      word.accent.fold(
+                          '', (s, accent) => s + getCircledAccent(accent)),
+                  style: TextStyle(fontSize: 36.0, fontFamily: 'JapaneseFont')),
+              SizedBox(height: 32.0),
+              RichText(
+                  text: TextSpan(
+                      text: getPosLabel(word.pos),
+                      children: [
+                        TextSpan(
+                            text: word.meaning,
+                            style: TextStyle(fontFamily: 'ChineseFont'))
+                      ],
+                      style: TextStyle(
+                          fontSize: 32.0,
+                          fontFamily: 'JapaneseFont',
+                          color: darkColor))),
+            ],
+          ),
         ),
-      ),
+        Expanded(
+          child: Container(
+              margin: EdgeInsets.only(top: 32.0),
+              child: Material(
+                color: darkColor,
+                child: Stack(
+                  alignment: AlignmentDirectional.topStart,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.error),
+                                color: lightColor,
+                                iconSize: 48.0,
+                                onPressed: () async {
+                                  await word.reverse();
+                                  callback(false);
+                                },
+                              ),
+                              Text('答错', style: TextStyle(color: lightColor)),
+                            ],
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.undo),
+                                color: lightColor,
+                                iconSize: 48.0,
+                                onPressed: () async {
+                                  await word.reverse();
+                                  callback(true);
+                                },
+                              ),
+                              Text('撤销', style: TextStyle(color: lightColor))
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    Center(
+                        child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.next_plan),
+                          iconSize: 112.0,
+                          color: lightColor,
+                          onPressed: () {
+                            callback(false);
+                          },
+                        ),
+                        Text('下一个',
+                            style:
+                                TextStyle(color: lightColor, fontSize: 16.0)),
+                      ],
+                    ))
+                  ],
+                ),
+              )),
+        )
+      ],
     );
   }
 }
