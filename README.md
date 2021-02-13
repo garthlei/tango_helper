@@ -21,9 +21,11 @@ The unchecked items have not been implemented yet.
   - [ ] Multiple choice questions
   - [x] Read test (written form to hiragana)
   - [x] Meaning test (written form/hiragana to meaning)
-  - [ ] Output test (meaning to written form/hiragana)
+  - [x] Output test (meaning to written form/hiragana)
   - [x] Write test (hiragana to written form)
   - [x] Accent support
+  - [ ] Word form support
+  - [ ] Explanation separation support
   - [ ] Hints
   - [x] Test mode selection
 - [ ] Platform collaboration

@@ -19,6 +19,9 @@ enum Mode {
   @HiveField(1)
   write,
 
+  @HiveField(3)
+  output,
+
   @HiveField(2)
   mixed,
 }

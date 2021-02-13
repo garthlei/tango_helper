@@ -17,6 +17,8 @@ class ModeAdapter extends TypeAdapter<Mode> {
         return Mode.read;
       case 1:
         return Mode.write;
+      case 3:
+        return Mode.output;
       case 2:
         return Mode.mixed;
       default:
@@ -32,6 +34,9 @@ class ModeAdapter extends TypeAdapter<Mode> {
         break;
       case Mode.write:
         writer.writeByte(1);
+        break;
+      case Mode.output:
+        writer.writeByte(3);
         break;
       case Mode.mixed:
         writer.writeByte(2);

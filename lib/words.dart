@@ -68,38 +68,90 @@ class _WordListPageState extends State<WordListPage> {
                     )),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      body: ListView(
-          children: wordList
-              .map((e) => ListTile(
-                    title: Text(e.writtenForm),
-                    subtitle: Text('${e.hiragana}' +
-                        e.accent.fold('',
-                            (str, accent) => str + getCircledAccent(accent))),
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => WordDetailPage(
-                              word: e,
-                              callback: () {
-                                setState(() {});
-                              },
-                            ))),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(e.isDisabled ? Icons.visibility_off : null),
-                        SizedBox(width: 16.0),
-                        Text('${e.correctAnswers} / ${e.totalAnswers}'),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () async {
-                            wordList.remove(e);
-                            await save();
-                            setState(() {});
-                          }, // TODO Use a better method to remove.
-                        ),
-                      ],
-                    ),
-                  ))
-              .toList()),
+      body: ListView(children: [
+        Container(
+          color: darkColor,
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            '已启用单词',
+            style: TextStyle(color: lightColor),
+          ),
+        ),
+        ...?wordList
+            .where((e) => !e.isDisabled)
+            .map((e) => ListTile(
+                  title: Text(e.writtenForm),
+                  subtitle: Text('${e.hiragana}' +
+                      e.accent.fold(
+                          '', (str, accent) => str + getCircledAccent(accent))),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => WordDetailPage(
+                            word: e,
+                            callback: () {
+                              setState(() {});
+                            },
+                          ))),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(e.isDisabled ? Icons.visibility_off : null),
+                      SizedBox(width: 16.0),
+                      Text('${e.correctAnswers} / ${e.totalAnswers}'),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () async {
+                          wordList.remove(e);
+                          await save();
+                          setState(() {});
+                        }, // TODO Use a better method to remove.
+                      ),
+                    ],
+                  ),
+                ))
+            .toList()
+            .reversed,
+        Container(
+          color: darkColor,
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            '未启用单词',
+            style: TextStyle(color: lightColor),
+          ),
+        ),
+        ...?wordList
+            .where((e) => e.isDisabled)
+            .map((e) => ListTile(
+                  title: Text(e.writtenForm),
+                  subtitle: Text('${e.hiragana}' +
+                      e.accent.fold(
+                          '', (str, accent) => str + getCircledAccent(accent))),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => WordDetailPage(
+                            word: e,
+                            callback: () {
+                              setState(() {});
+                            },
+                          ))),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(e.isDisabled ? Icons.visibility_off : null),
+                      SizedBox(width: 16.0),
+                      Text('${e.correctAnswers} / ${e.totalAnswers}'),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () async {
+                          wordList.remove(e);
+                          await save();
+                          setState(() {});
+                        }, // TODO Use a better method to remove.
+                      ),
+                    ],
+                  ),
+                ))
+            .toList()
+            .reversed,
+      ]),
     );
   }
 }
@@ -139,7 +191,7 @@ class _WordDetailPageState extends State<WordDetailPage> {
     _avg[0] = widget.word.getAverage();
     _avg[1] = widget.word.getAverage(mode: Mode.read);
     _avg[2] = widget.word.getAverage(mode: Mode.write);
-    _avg[3] = null; // TODO Use that mode data.
+    _avg[3] = widget.word.getAverage(mode: Mode.output);
   }
 
   @override
@@ -247,8 +299,8 @@ class _WordDetailPageState extends State<WordDetailPage> {
                                   ? (_avg[3] == null
                                       ? '数据暂缺'
                                       : '平均 ${_avg[3]} s ')
-                                  : '0 / 0'),
-                          // TODO Use real data and avoid this kind of trinary
+                                  : widget.word.getCount(mode: Mode.output)),
+                          // TODO Avoid this kind of trinary
                           // operators.
                         ],
                       ),
@@ -354,6 +406,13 @@ class _WordEditPageState extends State<WordEditPage> {
     _writtenFormController.text = word.writtenForm;
     _tempAccent.addAll(word.accent);
     _tempPos.addAll(word.pos);
+  }
+
+  @override
+  void dispose() {
+    _hiraganaController.dispose();
+    _writtenFormController.dispose();
+    super.dispose();
   }
 
   @override

@@ -41,6 +41,8 @@ class _MemoPageState extends State<MemoPage> {
       _mode = mode;
     }
 
+    // TODO Deal with words without an explanation.
+
     return Scaffold(
       backgroundColor: lightColor,
       appBar: AppBar(
@@ -98,28 +100,46 @@ class TestBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget content;
+
+    if (mode == Mode.read) {
+      content = Text(
+        word.writtenForm,
+        style: TextStyle(
+          fontSize: word.writtenForm.length < 5 ? 72.0 : 48.0,
+          fontFamily: 'JapaneseFont',
+        ),
+      );
+    } else if (mode == Mode.write) {
+      content = Text(
+        word.hiragana,
+        style: TextStyle(
+          fontSize: word.hiragana.length < 5 ? 72.0 : 48.0,
+          fontFamily: 'JapaneseFont',
+        ),
+      );
+    } else {
+      content = RichText(
+          text: TextSpan(
+              text: getPosLabel(word.pos),
+              children: [
+                TextSpan(
+                    text: word.meaning,
+                    style: TextStyle(fontSize: 64.0, fontFamily: 'ChineseFont'))
+              ],
+              style: TextStyle(
+                  fontSize: 32.0,
+                  fontFamily: 'JapaneseFont',
+                  color: darkColor)));
+    }
+
     return Column(
       children: [
         Center(
           child: Container(
-            height: MediaQuery.of(context).size.height / 3,
-            alignment: AlignmentDirectional.center,
-            child: mode == Mode.read
-                ? Text(
-                    word.writtenForm,
-                    style: TextStyle(
-                      fontSize: word.writtenForm.length < 5 ? 72.0 : 64.0,
-                      fontFamily: 'JapaneseFont',
-                    ),
-                  )
-                : Text(
-                    word.hiragana,
-                    style: TextStyle(
-                      fontSize: word.hiragana.length < 5 ? 72.0 : 48.0,
-                      fontFamily: 'JapaneseFont',
-                    ),
-                  ),
-          ),
+              height: MediaQuery.of(context).size.height / 3,
+              alignment: AlignmentDirectional.center,
+              child: content),
         ),
         Expanded(
           child: Container(
@@ -206,7 +226,7 @@ class ReviewBody extends StatelessWidget {
               SizedBox(height: 64.0),
               Text(word.writtenForm,
                   style: TextStyle(
-                    fontSize: word.writtenForm.length < 5 ? 72.0 : 64.0,
+                    fontSize: word.writtenForm.length < 5 ? 72.0 : 48.0,
                     fontFamily: 'JapaneseFont',
                   )),
               SizedBox(height: 16.0),
