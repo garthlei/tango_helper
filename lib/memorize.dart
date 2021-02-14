@@ -272,7 +272,7 @@ class ReviewBody extends StatelessWidget {
                                 color: lightColor,
                                 iconSize: 48.0,
                                 onPressed: () async {
-                                  await word.reverse();
+                                  await word.changeAnswer();
                                   callback(false);
                                 },
                               ),

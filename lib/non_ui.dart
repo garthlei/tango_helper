@@ -121,7 +121,7 @@ enum Pos {
 @HiveType(typeId: 3)
 class AnswerRecord {
   @HiveField(0)
-  final bool answer;
+  bool answer;
 
   @HiveField(1)
   final Mode type;
@@ -220,6 +220,13 @@ class Word {
     _totalAnswers--;
     _lastAnswer = null;
     answers.removeLast();
+    await save();
+  }
+
+  /// Change the last answer.
+  Future<void> changeAnswer() async {
+    if (answers.last.answer == true) _correctAnswers--;
+    answers.last.answer = !answers.last.answer;
     await save();
   }
 }
