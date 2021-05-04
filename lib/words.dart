@@ -79,33 +79,40 @@ class _WordListPageState extends State<WordListPage> {
         ),
         ...?wordList
             .where((e) => !e.isDisabled)
-            .map((e) => ListTile(
-                  title: Text(e.writtenForm),
-                  subtitle: Text('${e.hiragana}' +
-                      e.accent.fold(
-                          '', (str, accent) => str + getCircledAccent(accent))),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => WordDetailPage(
-                            word: e,
-                            callback: () {
-                              setState(() {});
-                            },
-                          ))),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(e.isDisabled ? Icons.visibility_off : null),
-                      SizedBox(width: 16.0),
-                      Text('${e.correctAnswers} / ${e.totalAnswers}'),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () async {
-                          wordList.remove(e);
-                          await save();
-                          setState(() {});
-                        }, // TODO Use a better method to remove.
-                      ),
-                    ],
+            .map((e) => Dismissible(
+                  key: UniqueKey(),
+                  onDismissed: (direction) {
+                    setState(() {
+                      e.isDisabled = true;
+                      save();
+                    });
+                  },
+                  background: Container(
+                      color: Colors.green,
+                      child: const Icon(
+                        Icons.check_rounded,
+                      )),
+                  direction: DismissDirection.endToStart,
+                  child: ListTile(
+                    title: Text(e.writtenForm),
+                    subtitle: Text('${e.hiragana}' +
+                        e.accent.fold('',
+                            (str, accent) => str + getCircledAccent(accent))),
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => WordDetailPage(
+                              word: e,
+                              callback: () {
+                                setState(() {});
+                              },
+                            ))),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(e.isDisabled ? Icons.visibility_off : null),
+                        SizedBox(width: 16.0),
+                        Text('${e.correctAnswers} / ${e.totalAnswers}'),
+                      ],
+                    ),
                   ),
                 ))
             .toList()
@@ -120,33 +127,64 @@ class _WordListPageState extends State<WordListPage> {
         ),
         ...?wordList
             .where((e) => e.isDisabled)
-            .map((e) => ListTile(
-                  title: Text(e.writtenForm),
-                  subtitle: Text('${e.hiragana}' +
-                      e.accent.fold(
-                          '', (str, accent) => str + getCircledAccent(accent))),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => WordDetailPage(
-                            word: e,
-                            callback: () {
-                              setState(() {});
-                            },
-                          ))),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(e.isDisabled ? Icons.visibility_off : null),
-                      SizedBox(width: 16.0),
-                      Text('${e.correctAnswers} / ${e.totalAnswers}'),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () async {
-                          wordList.remove(e);
-                          await save();
-                          setState(() {});
-                        }, // TODO Use a better method to remove.
-                      ),
-                    ],
+            .map((e) => Dismissible(
+                  key: UniqueKey(),
+                  onDismissed: (direction) {
+                    setState(() {
+                      e.isDisabled = false;
+                      save();
+                    });
+                  },
+                  background: Container(
+                      color: Colors.deepOrange,
+                      child: const Icon(
+                        Icons.arrow_upward,
+                      )),
+                  direction: DismissDirection.startToEnd,
+                  child: ListTile(
+                    title: Text(e.writtenForm),
+                    subtitle: Text('${e.hiragana}' +
+                        e.accent.fold('',
+                            (str, accent) => str + getCircledAccent(accent))),
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => WordDetailPage(
+                              word: e,
+                              callback: () {
+                                setState(() {});
+                              },
+                            ))),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(e.isDisabled ? Icons.visibility_off : null),
+                        SizedBox(width: 16.0),
+                        Text('${e.correctAnswers} / ${e.totalAnswers}'),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () async {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: Text('删除这个单词？'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('取消')),
+                                        TextButton(
+                                            onPressed: () async {
+                                              wordList.remove(e);
+                                              await save();
+                                              setState(() {});
+                                            },
+                                            child: Text('好'))
+                                      ],
+                                    ));
+                          }, // TODO Use a better method to remove.
+                        ),
+                      ],
+                    ),
                   ),
                 ))
             .toList()

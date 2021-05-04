@@ -149,7 +149,7 @@ class Word {
   String hiragana = '';
 
   @HiveField(8)
-  List<int> accent = List();
+  List<int> accent = [];
 
   @HiveField(3)
   String meaning = '';
@@ -165,7 +165,7 @@ class Word {
   int _correctAnswers = 0;
 
   @HiveField(9)
-  List<AnswerRecord> answers = List();
+  List<AnswerRecord> answers = [];
 
   @HiveField(7)
   bool _lastAnswer;
@@ -244,7 +244,7 @@ Future<void> init() async {
   wordList =
       (box.get('word_list') as List<dynamic>)?.map((e) => e as Word)?.toList();
   if (wordList == null) {
-    wordList = List<Word>();
+    wordList = [];
     await box.put('word_list', wordList);
   }
 
@@ -256,8 +256,8 @@ Future<void> init() async {
 
   /// For backward compatibility.
   for (int i = 0; i < wordList.length; i++) {
-    if (wordList[i].accent == null) wordList[i].accent = List();
-    if (wordList[i].answers == null) wordList[i].answers = List();
+    if (wordList[i].accent == null) wordList[i].accent = [];
+    if (wordList[i].answers == null) wordList[i].answers = [];
     if (wordList[i].isDisabled == null) wordList[i].isDisabled = false;
     if (wordList[i].pos.length == 21) wordList[i].pos.add(false);
   }
@@ -337,7 +337,7 @@ String getPosAbbr(Pos pos) {
 }
 
 String getPosLabel(List<bool> pos) {
-  List<Pos> posLabels = List();
+  List<Pos> posLabels = [];
   String _ret = '［';
   for (int i = 0; i < pos.length; i++) if (pos[i]) posLabels.add(Pos.values[i]);
 
