@@ -28,14 +28,15 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
-  hive: ^1.4.4+1
-  hive_flutter: ^0.3.1
+  hive: ^2.0.4
+  hive_flutter: ^1.1.0
+  google_fonts: ^2.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  hive_generator: ^0.8.2
-  build_runner: ^1.11.1
+  hive_generator: ^1.1.0
+  build_runner: ^2.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -81,10 +82,14 @@ flutter:
   fonts:
     - family: JapaneseFont
       fonts:
-        - asset: fonts/NotoSerifJP-Regular.otf
-        - asset: fonts/NotoSerifJP-ExtraLight.otf
-          weight: 200
-        - asset: fonts/NotoSerifJP-Medium.otf
-          weight: 500
-        - asset: fonts/NotoSerifJP-Bold.otf
-          weight: 700
+        - asset: fonts/EPKYOUKA.TTF
+        # - asset: fonts/NotoSerifJP-Regular.otf
+        # - asset: fonts/NotoSerifJP-ExtraLight.otf
+        #   weight: 200
+        # - asset: fonts/NotoSerifJP-Medium.otf
+        #   weight: 500
+        # - asset: fonts/NotoSerifJP-Bold.otf
+        #   weight: 700
+    - family: ChineseFont
+      fonts:
+        - asset: fonts/FZKTK.TTF

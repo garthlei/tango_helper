@@ -118,6 +118,42 @@ enum Pos {
   np,
 }
 
+const colors = [
+  /// 名
+  Colors.blue,
+  Colors.blue,
+
+  /// 形
+  Colors.green,
+  Colors.green,
+
+  /// 動
+  Colors.teal,
+  Colors.teal,
+  Colors.teal,
+  Colors.teal,
+  Colors.teal,
+  Colors.teal,
+
+  /// 副
+  Colors.deepOrange,
+
+  /// 連体
+  Colors.cyan,
+
+  /// 感
+  Colors.amber,
+
+  /// 接
+  Colors.indigo,
+
+  /// 判
+  Colors.redAccent,
+
+  /// 助
+  Colors.pink
+];
+
 @HiveType(typeId: 3)
 class AnswerRecord {
   @HiveField(0)
@@ -175,6 +211,8 @@ class Word {
 
   int get totalAnswers => _totalAnswers;
   int get correctAnswers => _correctAnswers;
+  Color get color =>
+      pos.indexOf(true) < 0 ? Colors.grey : colors[pos.indexOf(true)];
 
   double getAverage({Mode mode}) {
     int avg = 0;
@@ -202,6 +240,31 @@ class Word {
       }
 
     return '$yesCount / $totalCount';
+  }
+
+  List<int> getCountList({Mode mode}) {
+    int yesCount = 0, totalCount = 0;
+
+    for (final record in answers)
+      if (mode == null || mode == record.type) {
+        yesCount += record.answer ? 1 : 0;
+        totalCount++;
+      }
+
+    return [yesCount, totalCount];
+  }
+
+  String get posLabel {
+    List<Pos> posLabels = [];
+    String _ret = '';
+    for (int i = 0; i < pos.length; i++)
+      if (pos[i]) posLabels.add(Pos.values[i]);
+
+    if (posLabels.isEmpty) return '';
+    _ret += getPosAbbr(posLabels.first);
+    for (int i = 1; i < posLabels.length; i++)
+      _ret += '・' + getPosAbbr(posLabels[i]);
+    return _ret;
   }
 
   Future<void> answer(AnswerRecord record) async {

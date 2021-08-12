@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tango_helper/non_ui.dart';
-import 'package:tango_helper/theme.dart';
 
 /// Widgets related to memorization.
 
@@ -44,45 +44,96 @@ class _MemoPageState extends State<MemoPage> {
     // TODO Deal with words without an explanation.
 
     return Scaffold(
-      backgroundColor: lightColor,
-      appBar: AppBar(
-        backgroundColor: lightColor,
-        shadowColor: const Color(0),
-        leading: IconButton(
-          icon: BackButtonIcon(),
-          color: darkColor,
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          '单词 $_index',
-          style: TextStyle(color: darkColor),
+      // backgroundColor: isInTest ? Colors.grey[700] : _currentWord.color,
+      body: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        color: isInTest ? Colors.grey[700] : _currentWord.color,
+        child: Material(
+          color: Color(0),
+          child: Column(
+            children: [
+              AppBar(
+                backgroundColor: const Color(0),
+                shadowColor: const Color(0),
+                leading: IconButton(
+                  icon: BackButtonIcon(),
+                  splashRadius: 24.0,
+                  // color: darkColor,
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                title: Text(
+                  '单词 $_index',
+                  // style: TextStyle(color: darkColor),
+                ),
+                actions: [
+                  isInTest
+                      ? SizedBox()
+                      : Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              width: 64,
+                              alignment: Alignment.center,
+                              child: Text('/',
+                                  style: TextStyle(
+                                      fontSize: 28.0,
+                                      fontWeight: FontWeight.w100)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 20.0, bottom: 8.0),
+                              child: Text(
+                                  _currentWord.correctAnswers.toString(),
+                                  style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'DIN Condensed')),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 20.0, top: 24.0),
+                              child: Text(_currentWord.totalAnswers.toString(),
+                                  style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'DIN Condensed')),
+                            ),
+                          ],
+                        )
+                ],
+              ),
+              Expanded(
+                child: isInTest
+                    ? TestBody(
+                        word: _currentWord,
+                        mode: _mode,
+                        callback: () {
+                          setState(() {
+                            isInTest = false;
+                          });
+                          widget.callback();
+                        },
+                      )
+                    : ReviewBody(
+                        word: _currentWord,
+                        callback: (isBack) {
+                          if (isBack == null)
+                            throw Exception(
+                                '[isBack] is [null] in callback parameter');
+                          if (!isBack) {
+                            _index++;
+                            _currentWord = _tempWordList[
+                                Random().nextInt(_tempWordList.length)];
+                          }
+                          isInTest = true;
+                          setState(() {});
+                          widget.callback();
+                        }),
+              ),
+            ],
+          ),
         ),
       ),
-      body: isInTest
-          ? TestBody(
-              word: _currentWord,
-              mode: _mode,
-              callback: () {
-                setState(() {
-                  isInTest = false;
-                });
-                widget.callback();
-              },
-            )
-          : ReviewBody(
-              word: _currentWord,
-              callback: (isBack) {
-                if (isBack == null)
-                  throw Exception('[isBack] is [null] in callback parameter');
-                if (!isBack) {
-                  _index++;
-                  _currentWord =
-                      _tempWordList[Random().nextInt(_tempWordList.length)];
-                }
-                isInTest = true;
-                setState(() {});
-                widget.callback();
-              }),
     );
   }
 }
@@ -106,101 +157,112 @@ class TestBody extends StatelessWidget {
       content = Text(
         word.writtenForm,
         style: TextStyle(
-          fontSize: word.writtenForm.length < 5 ? 72.0 : 48.0,
-          fontFamily: 'JapaneseFont',
-        ),
+            fontSize: 36.0, color: Colors.white, fontFamily: 'Hiragino Sans'),
       );
     } else if (mode == Mode.write) {
       content = Text(
         word.hiragana,
         style: TextStyle(
-          fontSize: word.hiragana.length < 5 ? 72.0 : 48.0,
-          fontFamily: 'JapaneseFont',
-        ),
+            fontSize: 36.0, color: Colors.white, fontFamily: 'Hiragino Sans'),
       );
     } else {
-      content = RichText(
-          text: TextSpan(
-              text: getPosLabel(word.pos),
-              children: [
-                TextSpan(
-                    text: word.meaning,
-                    style: TextStyle(fontSize: 64.0, fontFamily: 'ChineseFont'))
-              ],
+      content = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            word.posLabel,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 36.0,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Hiragino Sans',
+            ),
+          ),
+          SizedBox(width: 36.0),
+          Text(word.meaning,
               style: TextStyle(
-                  fontSize: 32.0,
-                  fontFamily: 'JapaneseFont',
-                  color: darkColor)));
+                  color: Colors.white,
+                  fontSize: 36.0,
+                  fontWeight: FontWeight.w300))
+        ],
+      );
     }
 
     return Column(
       children: [
         Center(
           child: Container(
-              height: MediaQuery.of(context).size.height / 3,
+              height: MediaQuery.of(context).size.height / 2,
               alignment: AlignmentDirectional.center,
               child: content),
         ),
         Expanded(
           child: Container(
-              margin: EdgeInsets.only(top: 32.0),
-              child: Material(
-                  color: darkColor,
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.check_circle),
-                              iconSize: 112.0,
-                              color: lightColor,
-                              onPressed: () async {
-                                await word.answer(AnswerRecord(
-                                    answer: true,
-                                    type: mode,
-                                    time: _startTime,
-                                    duration:
-                                        DateTime.now().difference(_startTime)));
-                                callback();
-                              },
-                            ),
-                            Text('我记得',
-                                style: TextStyle(
-                                    color: lightColor,
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold)),
-                          ],
+              child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Text(
+                        '✓',
+                        style: GoogleFonts.balsamiqSans(
+                          fontSize: 96,
+                          color: Colors.white,
                         ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.cancel),
-                              iconSize: 112.0,
-                              color: lightColor,
-                              onPressed: () async {
-                                await word.answer(AnswerRecord(
-                                    answer: false,
-                                    type: mode,
-                                    time: _startTime,
-                                    duration:
-                                        DateTime.now().difference(_startTime)));
-                                callback();
-                              },
-                            ),
-                            Text('我忘了',
-                                style: TextStyle(
-                                    color: lightColor,
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ],
+                      ),
+                      iconSize: 100.0,
+                      // color: Colors.white,
+                      onPressed: () async {
+                        await word.answer(AnswerRecord(
+                            answer: true,
+                            type: mode,
+                            time: _startTime,
+                            duration: DateTime.now().difference(_startTime)));
+                        callback();
+                      },
                     ),
-                  ))),
+                    Text('我记得',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Text(
+                        '✗',
+                        style: GoogleFonts.balsamiqSans(
+                          fontSize: 96,
+                          color: Colors.white,
+                        ),
+                      ),
+                      iconSize: 100.0,
+                      color: Colors.white,
+                      onPressed: () async {
+                        await word.answer(AnswerRecord(
+                            answer: false,
+                            type: mode,
+                            time: _startTime,
+                            duration: DateTime.now().difference(_startTime)));
+                        callback();
+                      },
+                    ),
+                    Text('我忘了',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ],
+            ),
+          )),
         )
       ],
     );
@@ -226,96 +288,102 @@ class ReviewBody extends StatelessWidget {
               SizedBox(height: 64.0),
               Text(word.writtenForm,
                   style: TextStyle(
-                    fontSize: word.writtenForm.length < 5 ? 72.0 : 48.0,
-                    fontFamily: 'JapaneseFont',
+                    fontSize: 36.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Hiragino Sans',
                   )),
-              SizedBox(height: 16.0),
+              SizedBox(height: 8.0),
               Text(
                   word.hiragana +
+                      ' ' +
                       word.accent.fold(
                           '', (s, accent) => s + getCircledAccent(accent)),
-                  style: TextStyle(fontSize: 36.0, fontFamily: 'JapaneseFont')),
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.white,
+                    fontFamily: 'Hiragino Sans',
+                  )),
               SizedBox(height: 32.0),
-              RichText(
-                  text: TextSpan(
-                      text: getPosLabel(word.pos),
-                      children: [
-                        TextSpan(
-                            text: word.meaning,
-                            style: TextStyle(fontFamily: 'ChineseFont'))
-                      ],
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    word.posLabel,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Hiragino Sans',
+                    ),
+                  ),
+                  SizedBox(width: 16.0),
+                  Text(word.meaning,
                       style: TextStyle(
-                          fontSize: 32.0,
-                          fontFamily: 'JapaneseFont',
-                          color: darkColor))),
+                          color: Colors.white,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w300))
+                ],
+              )
             ],
           ),
         ),
         Expanded(
           child: Container(
               margin: EdgeInsets.only(top: 32.0),
-              child: Material(
-                color: darkColor,
-                child: Stack(
-                  alignment: AlignmentDirectional.topStart,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.error),
-                                color: lightColor,
-                                iconSize: 48.0,
-                                onPressed: () async {
-                                  await word.changeAnswer();
-                                  callback(false);
-                                },
-                              ),
-                              Text('答错', style: TextStyle(color: lightColor)),
-                            ],
-                          ),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.undo),
-                                color: lightColor,
-                                iconSize: 48.0,
-                                onPressed: () async {
-                                  await word.reverse();
-                                  callback(true);
-                                },
-                              ),
-                              Text('撤销', style: TextStyle(color: lightColor))
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    Center(
-                        child: Column(
-                      mainAxisSize: MainAxisSize.min,
+              child: Stack(
+                alignment: AlignmentDirectional.bottomStart,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                          icon: const Icon(Icons.next_plan),
-                          iconSize: 112.0,
-                          color: lightColor,
-                          onPressed: () {
+                        TextButton(
+                          child:
+                              Text('答错', style: TextStyle(color: Colors.white)),
+                          onPressed: () async {
+                            await word.changeAnswer();
                             callback(false);
                           },
                         ),
-                        Text('下一个',
-                            style:
-                                TextStyle(color: lightColor, fontSize: 16.0)),
+                        TextButton(
+                          child:
+                              Text('撤销', style: TextStyle(color: Colors.white)),
+                          onPressed: () async {
+                            await word.reverse();
+                            callback(true);
+                          },
+                        ),
                       ],
-                    ))
-                  ],
-                ),
+                    ),
+                  ),
+                  Center(
+                      child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Text(
+                          '✓',
+                          style: GoogleFonts.balsamiqSans(
+                              fontSize: 96,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        iconSize: 100.0,
+                        color: Colors.white,
+                        onPressed: () {
+                          callback(false);
+                        },
+                      ),
+                      Text('下一个',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold)),
+                    ],
+                  ))
+                ],
               )),
         )
       ],
