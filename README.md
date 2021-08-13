@@ -15,7 +15,7 @@ The unchecked items have not been implemented yet.
   - [x] Meaning
   - [ ] Example sentences
   - [x] Brief memorization history
-  - [ ] Detailed memorization history
+  - [x] Detailed memorization history
 - [x] Word memorization
   - [x] "Remember"/"Don't remember" options
   - [ ] Multiple choice questions
@@ -37,18 +37,20 @@ The unchecked items have not been implemented yet.
 
 This app is still in the alpha stage, and we do not provide pre-compiled binaries. You can visit the [Flutter website](https://flutter.dev) and read the instructions on how to build the app.
 
-Considering the repo size and potential copyright issues, we do not provide font files in the repository. A Japanese font (Noto Serif JP) is specified in `pubspec.yaml`. You can download the files on [Google Fonts](https://fonts.google.com) and copy them into `fonts/` directory if you would like to used the font. Otherwise, you could modify `pubspec.yaml` or other source files to use other fonts. A Chinese font should also be specified in `pubspec.yaml`, with the name *ChineseFont*. You can copy your favorite Chinese font into `fonts/`, and specify it as *ChineseFont* in `pubspec.yaml`. This font is used in word explanations.
+We used two external fonts for Chinese and Japanese in the legacy UI version. Considering the repo size and potential copyright issues, we do not provide font files in the repository. In the current UI version, we used the Flutter package `google_fonts` to eliminate the need of downloading the fonts manually. Also, we are now using the fonts shipped with iOS for most cases. You can substitute them with your favorite fonts when needed.
 
 ## Screenshots
 
-![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.49.05](./README.assets/1.png)
+![1](./README.assets/1.png)
 
-![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.51.07](./README.assets/2.png)
+![2](./README.assets/2.png)
 
-![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.50.44](./README.assets/3.png)
+![3](./README.assets/3.png)
 
-![Simulator Screen Shot - iPhone 8 - 2021-02-03 at 20.50.44](./README.assets/4.png)
+![4](./README.assets/4.png)
+
+![5](./README.assets/5.png)
 
 # Acknowledgments
 
-The major functionalities of this app are inspired by other word-memorizing apps, such as MOJi辞書, 沪江开心词场, 拓词 (for English), and 扇贝单词 (for English). Parts of speeches are based on the grammar system of the Japanese textbook *综合日语*.
+The major functionalities of this app are inspired by other word-memorizing apps, such as MOJi辞書, 沪江开心词场, 拓词 (for English), and 扇贝单词 (for English). Parts of speech are based on the grammar system of the Japanese textbook *综合日语*. The idea assigning a color to each part of speech is from the app MOJi辞書. The color scheme of scores is inspired by the color scheme of PKU Helper.

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:tango_helper/legacy_words.dart';
 import 'package:tango_helper/memorize.dart';
 import 'package:tango_helper/non_ui.dart';
+import 'package:tango_helper/settings.dart';
 import 'package:tango_helper/theme.dart';
 import 'package:tango_helper/words.dart';
 
@@ -133,7 +134,10 @@ class _HomeScreenState extends State<HomeScreen> {
               title:
                   Text('设置', style: TextStyle(fontWeight: FontWeight.normal)),
               leading: const Icon(Icons.settings),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SettingsPage()));
+              },
             )
           ],
         ),
