@@ -384,48 +384,57 @@ class _WordDetailPageState extends State<WordDetailPage> {
                       SizedBox(height: 128.0),
                       Hero(
                         tag: 1,
-                        child: Text(widget.word.writtenForm,
-                            style: TextStyle(
-                                fontSize: 36.0,
-                                color: Colors.white,
-                                fontFamily: 'Hiragino Sans',
-                                fontWeight: FontWeight.w600)),
+                        child: Material(
+                          color: const Color(0),
+                          child: Text(widget.word.writtenForm,
+                              style: TextStyle(
+                                  fontSize: 36.0,
+                                  color: Colors.white,
+                                  fontFamily: 'Hiragino Sans',
+                                  fontWeight: FontWeight.w600)),
+                        ),
                       ),
                       SizedBox(height: 8.0),
                       Hero(
                         tag: 2,
-                        child: Text(
-                            widget.word.hiragana +
-                                widget.word.accent.fold(
-                                    '',
-                                    (s, accent) =>
-                                        s + getCircledAccent(accent)),
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.white,
-                              fontFamily: 'Hiragino Sans',
-                            )),
+                        child: Material(
+                          color: const Color(0),
+                          child: Text(
+                              widget.word.hiragana +
+                                  widget.word.accent.fold(
+                                      '',
+                                      (s, accent) =>
+                                          s + getCircledAccent(accent)),
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: Colors.white,
+                                fontFamily: 'Hiragino Sans',
+                              )),
+                        ),
                       ),
                       SizedBox(height: 32.0),
                       Hero(
                         tag: 3,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              widget.word.posLabel,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(width: 16.0),
-                            Text(widget.word.meaning,
+                        child: Material(
+                          color: const Color(0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                widget.word.posLabel,
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16.0,
-                                    fontWeight: FontWeight.w300)),
-                          ],
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(width: 16.0),
+                              Text(widget.word.meaning,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w300)),
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 48.0),
@@ -644,49 +653,58 @@ class _WordEditPageState extends State<WordEditPage> {
                       SizedBox(height: 128.0),
                       Hero(
                         tag: 1,
-                        child: Text(word.writtenForm,
-                            style: TextStyle(
-                              fontSize: 36.0,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Hiragino Sans',
-                            )),
+                        child: Material(
+                          color: const Color(0),
+                          child: Text(word.writtenForm,
+                              style: TextStyle(
+                                fontSize: 36.0,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Hiragino Sans',
+                              )),
+                        ),
                       ),
                       SizedBox(height: 8.0),
                       Hero(
                         tag: 2,
-                        child: Text(
-                            word.hiragana +
-                                word.accent.fold(
-                                    '',
-                                    (s, accent) =>
-                                        s + getCircledAccent(accent)),
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.white,
-                              fontFamily: 'Hiragino Sans',
-                            )),
+                        child: Material(
+                          color: const Color(0),
+                          child: Text(
+                              word.hiragana +
+                                  word.accent.fold(
+                                      '',
+                                      (s, accent) =>
+                                          s + getCircledAccent(accent)),
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: Colors.white,
+                                fontFamily: 'Hiragino Sans',
+                              )),
+                        ),
                       ),
                       SizedBox(height: 32.0),
                       Hero(
                         tag: 3,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              word.posLabel,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(width: 16.0),
-                            Text(word.meaning,
+                        child: Material(
+                          color: const Color(0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                word.posLabel,
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16.0,
-                                    fontWeight: FontWeight.w300)),
-                          ],
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(width: 16.0),
+                              Text(word.meaning,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w300)),
+                            ],
+                          ),
                         ),
                       ),
                     ],
