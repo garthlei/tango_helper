@@ -79,17 +79,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-  fonts:
-    - family: JapaneseFont
-      fonts:
-        - asset: fonts/EPKYOUKA.TTF
-        # - asset: fonts/NotoSerifJP-Regular.otf
-        # - asset: fonts/NotoSerifJP-ExtraLight.otf
-        #   weight: 200
-        # - asset: fonts/NotoSerifJP-Medium.otf
-        #   weight: 500
-        # - asset: fonts/NotoSerifJP-Bold.otf
-        #   weight: 700
-    - family: ChineseFont
-      fonts:
-        - asset: fonts/FZKTK.TTF

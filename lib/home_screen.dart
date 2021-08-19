@@ -3,7 +3,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:tango_helper/legacy_words.dart';
 import 'package:tango_helper/memorize.dart';
 import 'package:tango_helper/non_ui.dart';
 import 'package:tango_helper/settings.dart';
@@ -119,15 +118,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             setState(() {});
                           },
                         )));
-              },
-            ),
-            ListTile(
-              title:
-                  Text('旧版入口', style: TextStyle(fontWeight: FontWeight.normal)),
-              leading: const Icon(Icons.inventory),
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => LegacyWordListPage()));
               },
             ),
             ListTile(
