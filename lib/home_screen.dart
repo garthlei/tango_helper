@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:dart_random_choice/dart_random_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:tango_helper/memorize.dart';
 import 'package:tango_helper/non_ui.dart';
@@ -50,7 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ];
       exampleWord.meaning = '您正在使用的应用程序。请进入单词库添加单词。';
     } else {
-      exampleWord = wordList[Random().nextInt(wordList.length)];
+      exampleWord =
+          randomChoice(wordList); //, wordList.map((e) => 1 / e.score));
     }
     super.initState();
   }
@@ -187,20 +189,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontFamily: 'Hiragino Sans',
                               ),
                             ),
-                            Text(
-                              exampleWord.hiragana +
-                                  '　' +
-                                  exampleWord.accent.fold(
-                                      '',
-                                      (s, accent) =>
-                                          s + getCircledAccent(accent)),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w200,
-                                fontFamily: 'Hiragino Sans',
-                              ),
-                            ),
+                            RichText(
+                                text: TextSpan(
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      color: Colors.white,
+                                      fontFamily: 'Hiragino Sans',
+                                    ),
+                                    children: [
+                                  HiraganaText(
+                                      splittedWord: exampleWord.splittedWord),
+                                ])),
                             SizedBox(height: 16.0),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,19 +313,16 @@ class WordCard extends Container {
                             word.writtenForm,
                             style: TextStyle(fontFamily: 'Hiragino Sans'),
                           ),
-                          Text(
-                            word.hiragana +
-                                word.accent.fold(
-                                    '',
-                                    (str, accent) =>
-                                        str + getCircledAccent(accent)),
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.w300,
-                              fontFamily: 'Hiragino Sans',
-                            ),
-                          ),
+                          RichText(
+                              text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Colors.grey,
+                                    fontFamily: 'Hiragino Sans',
+                                  ),
+                                  children: [
+                                HiraganaText(splittedWord: word.splittedWord),
+                              ])),
                         ],
                       ),
                     ),

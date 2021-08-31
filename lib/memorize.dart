@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:dart_random_choice/dart_random_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tango_helper/non_ui.dart';
+import 'package:tango_helper/words.dart';
 
 /// Widgets related to memorization.
 
@@ -23,14 +25,16 @@ class _MemoPageState extends State<MemoPage> {
   bool isInTest = true;
 
   Mode _mode;
-  final _tempWordList = wordList.where((e) => !e.isDisabled).toList();
+  final _tempWordList =
+      enableWorkSet ? wordList.where((e) => !e.isDisabled).toList() : wordList;
   Word _currentWord;
   // TODO Check whether [wordList] is empty.
 
   @override
   void initState() {
     super.initState();
-    _currentWord = _tempWordList[Random().nextInt(_tempWordList.length)];
+    _currentWord =
+        randomChoice(_tempWordList, _tempWordList.map((e) => e.score));
   }
 
   @override
@@ -122,8 +126,8 @@ class _MemoPageState extends State<MemoPage> {
                                 '[isBack] is [null] in callback parameter');
                           if (!isBack) {
                             _index++;
-                            _currentWord = _tempWordList[
-                                Random().nextInt(_tempWordList.length)];
+                            _currentWord = randomChoice(_tempWordList,
+                                _tempWordList.map((e) => e.score));
                           }
                           isInTest = true;
                           setState(() {});
@@ -160,13 +164,22 @@ class TestBody extends StatelessWidget {
             fontSize: 36.0, color: Colors.white, fontFamily: 'Hiragino Sans'),
       );
     } else if (mode == Mode.write) {
-      content = Text(
-        word.hiragana,
-        style: TextStyle(
-            fontSize: 36.0, color: Colors.white, fontFamily: 'Hiragino Sans'),
-      );
+      content = RichText(
+          text: TextSpan(
+              style: TextStyle(
+                fontSize: 36.0,
+                color: Colors.white,
+                fontFamily: 'Hiragino Sans',
+              ),
+              children: [HiraganaText(splittedWord: word.splittedWord)]));
+      // content = Text(
+      //   word.hiragana,
+      //   style: TextStyle(
+      //       fontSize: 36.0, color: Colors.white, fontFamily: 'Hiragino Sans'),
+      // );
     } else {
       content = Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
@@ -179,11 +192,19 @@ class TestBody extends StatelessWidget {
             ),
           ),
           SizedBox(width: 36.0),
-          Text(word.meaning,
+          Container(
+            width: word.meaning.characters.length > 7
+                ? MediaQuery.of(context).size.width - 36.0 * 3
+                : null,
+            child: Text(
+              word.meaning,
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 36.0,
-                  fontWeight: FontWeight.w300))
+                color: Colors.white,
+                fontSize: 36.0,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          )
         ],
       );
     }
@@ -294,16 +315,19 @@ class ReviewBody extends StatelessWidget {
                     fontFamily: 'Hiragino Sans',
                   )),
               SizedBox(height: 8.0),
-              Text(
-                  word.hiragana +
-                      ' ' +
-                      word.accent.fold(
-                          '', (s, accent) => s + getCircledAccent(accent)),
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.white,
-                    fontFamily: 'Hiragino Sans',
-                  )),
+              RichText(
+                  text: TextSpan(
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Colors.white,
+                        fontFamily: 'Hiragino Sans',
+                      ),
+                      children: [
+                    HiraganaText(splittedWord: word.splittedWord),
+                    TextSpan(
+                        text: word.accent.fold(
+                            ' ', (s, accent) => s + getCircledAccent(accent)))
+                  ])),
               SizedBox(height: 32.0),
               Row(
                 mainAxisSize: MainAxisSize.min,

@@ -77,6 +77,33 @@ class _SettingsPageState extends State<SettingsPage> {
               trailing:
                   mode == Mode.mixed ? const Icon(Icons.check) : SizedBox(),
             ),
+            Divider(height: 0),
+            SizedBox(height: 16),
+            Divider(height: 0),
+            SwitchListTile(
+                title: Text('使用工作集'),
+                tileColor: Colors.white,
+                value: enableWorkSet,
+                onChanged: (val) async {
+                  setState(() {
+                    enableWorkSet = val;
+                  });
+                  save();
+                }),
+            Divider(height: 0),
+            SizedBox(height: 16),
+            Divider(height: 0),
+            SwitchListTile(
+                title: Text('开发者模式'),
+                tileColor: Colors.white,
+                value: enableDebug,
+                onChanged: (val) async {
+                  setState(() {
+                    enableDebug = val;
+                  });
+                  save();
+                }),
+            Divider(height: 0),
           ],
         ));
   }

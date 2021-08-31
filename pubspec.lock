@@ -162,6 +162,13 @@ packages:
       url: "https://mirrors.tuna.tsinghua.edu.cn/dart-pub"
     source: hosted
     version: "1.0.3"
+  dart_random_choice:
+    dependency: "direct main"
+    description:
+      name: dart_random_choice
+      url: "https://mirrors.tuna.tsinghua.edu.cn/dart-pub"
+    source: hosted
+    version: "0.0.2"
   dart_style:
     dependency: transitive
     description:

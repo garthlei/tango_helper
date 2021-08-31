@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -8,6 +10,8 @@ part 'non_ui.g.dart';
 
 Mode mode;
 Box box;
+bool enableWorkSet;
+bool enableDebug;
 List<Word> wordList;
 
 // The memorization mode.
@@ -209,6 +213,61 @@ class Word {
   @HiveField(10)
   bool isDisabled = false;
 
+  List<String> get splittedWord {
+    if (accent == null || accent.isEmpty) return [hiragana, '', ''];
+
+    int accentNum = accent[0];
+    const yoon = ['ゃ', 'ゅ', 'ょ'];
+    List<String> ret = [];
+
+    if (accentNum == 1 &&
+        hiragana.length > 1 &&
+        yoon.contains(hiragana.characters.elementAt(1))) {
+      ret.addAll([
+        '',
+        hiragana.characters.take(2).string,
+        hiragana.characters.skip(2).string
+      ]);
+    } else if (accentNum == 1) {
+      ret.addAll(
+          ['', hiragana.characters.first, hiragana.characters.skip(1).string]);
+    } else if (accentNum == 0 &&
+        hiragana.length > 1 &&
+        yoon.contains(hiragana.characters.elementAt(1))) {
+      ret.addAll([
+        hiragana.characters.take(2).string,
+        hiragana.characters.skip(2).string,
+        ''
+      ]);
+    } else if (accentNum == 0) {
+      ret.addAll(
+          [hiragana.characters.first, hiragana.characters.skip(1).string, '']);
+    } else {
+      int i = 0, j = 0;
+      for (; i < accentNum && j < hiragana.characters.length; ++i, ++j) {
+        while (j + 1 < hiragana.characters.length &&
+            yoon.contains(hiragana.characters.elementAt(j + 1))) ++j;
+      }
+
+      if (hiragana.length > 1 &&
+          yoon.contains(hiragana.characters.elementAt(1))) {
+        ret.addAll([
+          hiragana.characters.take(2).string,
+          hiragana.characters.take(j).skip(2).string,
+          hiragana.characters.skip(j).string
+        ]);
+      } else {
+        ret.addAll([
+          hiragana.characters.first,
+          hiragana.characters.take(j).skip(1).string,
+          hiragana.characters.skip(j).string
+        ]);
+      }
+    }
+
+    return ret;
+  }
+
   int get totalAnswers => _totalAnswers;
   int get correctAnswers => _correctAnswers;
   Color get color =>
@@ -252,6 +311,45 @@ class Word {
       }
 
     return [yesCount, totalCount];
+  }
+
+  double get score {
+    const modes = [Mode.read, Mode.write, Mode.output, null];
+
+    double timeScore = modes.map((e) {
+      var countList = getCountList(mode: e);
+      assert(countList != null && countList.length == 2);
+      if (countList[1] == 0 || countList[0] <= 0.75 * countList[1]) {
+        return 20.0;
+      } else if (countList[0] <= 0.80 * countList[1]) {
+        return 15.0;
+      } else if (countList[0] <= 0.85 * countList[1]) {
+        return 10.0;
+      } else if (countList[0] <= 0.90 * countList[1]) {
+        return 5.0;
+      } else {
+        return 1.0;
+      }
+    }).reduce((value, element) => value + element);
+
+    double answerScore = modes.map((e) {
+      var seconds = getAverage(mode: e);
+      if (seconds == null || seconds > 10) {
+        return 20.0;
+      } else if (seconds >= 5) {
+        return 16.0;
+      } else if (seconds >= 4) {
+        return 12.0;
+      } else if (seconds >= 3) {
+        return 8.0;
+      } else if (seconds >= 2) {
+        return 2.0;
+      } else {
+        return 1.0;
+      }
+    }).reduce((value, element) => value + element);
+
+    return timeScore + answerScore;
   }
 
   String get posLabel {
@@ -317,6 +415,18 @@ Future<void> init() async {
     await box.put('mode', mode);
   }
 
+  enableWorkSet = box.get('enable_work_set');
+  if (enableWorkSet == null) {
+    enableWorkSet = true;
+    await box.put('enable_work_set', enableWorkSet);
+  }
+
+  enableDebug = box.get('enable_debug');
+  if (enableDebug == null) {
+    enableDebug = false;
+    await box.put('enable_debug', enableDebug);
+  }
+
   /// For backward compatibility.
   for (int i = 0; i < wordList.length; i++) {
     if (wordList[i].accent == null) wordList[i].accent = [];
@@ -331,6 +441,8 @@ Future<void> init() async {
 Future<void> save() async {
   await box.put('word_list', wordList);
   await box.put('mode', mode);
+  await box.put('enable_work_set', enableWorkSet);
+  await box.put('enable_debug', enableDebug);
 }
 
 String getCircledAccent(int accent) {
