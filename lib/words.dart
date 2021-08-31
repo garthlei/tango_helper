@@ -92,13 +92,17 @@ class _WordListPageState extends State<WordListPage> {
                             ),
                           ],
                         ),
-                        subtitle: Text(
-                          '${e.hiragana} ' +
-                              e.accent.fold(
-                                  '',
-                                  (str, accent) =>
-                                      str + getCircledAccent(accent)),
-                          style: TextStyle(fontWeight: FontWeight.w300),
+                        subtitle: RichText(
+                          text: TextSpan(
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .caption
+                                      .color),
+                              children: [
+                                HiraganaText(splittedWord: e.splittedWord)
+                              ]),
                         ),
                         onTap: () =>
                             Navigator.of(context).push(MaterialPageRoute(
@@ -113,6 +117,10 @@ class _WordListPageState extends State<WordListPage> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            enableDebug
+                                ? Text(((e.score * 100).roundToDouble() / 100)
+                                    .toString())
+                                : SizedBox(),
                             SizedBox(width: 16.0),
                             Text(
                               '${e.correctAnswers} / ${e.totalAnswers}',
@@ -228,13 +236,17 @@ class _WordListPageState extends State<WordListPage> {
                             ),
                           ],
                         ),
-                        subtitle: Text(
-                          '${e.hiragana} ' +
-                              e.accent.fold(
-                                  '',
-                                  (str, accent) =>
-                                      str + getCircledAccent(accent)),
-                          style: TextStyle(fontWeight: FontWeight.w300),
+                        subtitle: RichText(
+                          text: TextSpan(
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .caption
+                                      .color),
+                              children: [
+                                HiraganaText(splittedWord: e.splittedWord)
+                              ]),
                         ),
                         onTap: () =>
                             Navigator.of(context).push(MaterialPageRoute(
@@ -249,6 +261,10 @@ class _WordListPageState extends State<WordListPage> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            enableDebug
+                                ? Text(((e.score * 100).roundToDouble() / 100)
+                                    .toString())
+                                : SizedBox(),
                             SizedBox(width: 16.0),
                             Text(
                               '${e.correctAnswers} / ${e.totalAnswers}',
@@ -386,7 +402,7 @@ class _WordDetailPageState extends State<WordDetailPage> {
                         tag: 1,
                         child: Material(
                           color: const Color(0),
-                          child: Text(widget.word.writtenForm,
+                          child: SelectableText(widget.word.writtenForm,
                               style: TextStyle(
                                   fontSize: 36.0,
                                   color: Colors.white,
@@ -399,17 +415,22 @@ class _WordDetailPageState extends State<WordDetailPage> {
                         tag: 2,
                         child: Material(
                           color: const Color(0),
-                          child: Text(
-                              widget.word.hiragana +
-                                  widget.word.accent.fold(
-                                      '',
-                                      (s, accent) =>
-                                          s + getCircledAccent(accent)),
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.white,
-                                fontFamily: 'Hiragino Sans',
-                              )),
+                          child: RichText(
+                              text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.white,
+                                    fontFamily: 'Hiragino Sans',
+                                  ),
+                                  children: [
+                                HiraganaText(
+                                    splittedWord: widget.word.splittedWord),
+                                TextSpan(
+                                    text: widget.word.accent.fold(
+                                        ' ',
+                                        (s, accent) =>
+                                            s + getCircledAccent(accent)))
+                              ])),
                         ),
                       ),
                       SizedBox(height: 32.0),
@@ -669,17 +690,21 @@ class _WordEditPageState extends State<WordEditPage> {
                         tag: 2,
                         child: Material(
                           color: const Color(0),
-                          child: Text(
-                              word.hiragana +
-                                  word.accent.fold(
-                                      '',
-                                      (s, accent) =>
-                                          s + getCircledAccent(accent)),
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.white,
-                                fontFamily: 'Hiragino Sans',
-                              )),
+                          child: RichText(
+                              text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.white,
+                                    fontFamily: 'Hiragino Sans',
+                                  ),
+                                  children: [
+                                HiraganaText(splittedWord: word.splittedWord),
+                                TextSpan(
+                                    text: word.accent.fold(
+                                        ' ',
+                                        (s, accent) =>
+                                            s + getCircledAccent(accent)))
+                              ])),
                         ),
                       ),
                       SizedBox(height: 32.0),
@@ -920,4 +945,22 @@ class PosChip extends StatelessWidget {
       ),
     );
   }
+}
+
+class HiraganaText extends TextSpan {
+  final List<String> splittedWord;
+
+  HiraganaText({this.splittedWord})
+      : assert(splittedWord.length == 3),
+        super(
+            text: splittedWord[0],
+            style: TextStyle(fontWeight: FontWeight.w300),
+            children: [
+              TextSpan(
+                  text: splittedWord[1],
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(
+                text: splittedWord[2],
+              ),
+            ]);
 }
